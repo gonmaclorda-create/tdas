@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Compilar proyecto",
+      "type": "shell",
+      "command": "javac",
+      "args": [
+        "-cp",
+        "lib\\junit-4.13.2.jar;lib\\hamcrest-core-1.3.jar;bin",
+        "-d",
+        "bin",
+        "src/main/java/ar/edu/uns/cs/ed/tdas/tdacola/*.java",
+        "src/main/java/ar/edu/uns/cs/ed/tdas/excepciones/*.java"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": "$javac"
+    },
+    {
+      "label": "Compilar tests",
+      "type": "shell",
+      "command": "javac",
+      "args": [
+        "-cp",
+        "lib\\junit-4.13.2.jar;lib\\hamcrest-core-1.3.jar;bin",
+        "-d",
+        "bin",
+        "src/test/java/ar/edu/uns/cs/ed/tdas/tdacola/*.java"
+      ],
+      "dependsOn": ["Compilar proyecto"],
+      "problemMatcher": "$javac"
+    },
+    {
+      "label": "Ejecutar QueueTest",
+      "type": "shell",
+      "command": "java",
+      "args": [
+        "-cp",
+        "lib\\junit-4.13.2.jar;lib\\hamcrest-core-1.3.jar;bin",
+        "org.junit.runner.JUnitCore",
+        "ar.edu.uns.cs.ed.tdas.tdacola.QueueTest"
+      ],
+      "dependsOn": ["Compilar tests"],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    }
+  ]
+}

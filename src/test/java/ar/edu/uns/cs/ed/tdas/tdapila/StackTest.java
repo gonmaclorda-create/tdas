@@ -9,7 +9,7 @@
 
 package ar.edu.uns.cs.ed.tdas.tdapila;
 import org.junit.*;                         //For tags
-import static org.junit.Assert.*;           //For assertions
+import static org.junit.Assert.*;           //For assñertions
 
 import ar.edu.uns.cs.ed.tdas.excepciones.EmptyStackException;
 
@@ -20,7 +20,7 @@ public class StackTest {
 
 	private Stack<String> getStack()
 	{
-	  return new PilaConLista<String>();
+	  return new PilaArreglo<String>();
 	  
 	 }
 	

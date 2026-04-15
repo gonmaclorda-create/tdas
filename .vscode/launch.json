@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "JUnit: QueueTest",
+      "type": "java",
+      "name": "QueueTest",
+      "request": "launch",
+      "mainClass": "org.junit.runner.JUnitCore",
+      "args": "ar.edu.uns.cs.ed.tdas.tdacola.QueueTest",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "preLaunchTask": "Compilar tests"
+    }
+  ]
+}

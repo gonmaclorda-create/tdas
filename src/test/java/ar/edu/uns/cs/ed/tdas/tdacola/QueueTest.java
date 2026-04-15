@@ -5,7 +5,6 @@ import ar.edu.uns.cs.ed.tdas.excepciones.EmptyQueueException;
 import static org.junit.Assert.*;
 import org.junit.*;
 
-
 public class QueueTest {
 	private Queue<String> c; //interface
 	private String n1,n2,n3;
@@ -17,7 +16,7 @@ public class QueueTest {
 
 	private Queue<String> getQueue()
 	{
-	  return new ColaEnlazada<String>();
+	  return new ColaConPila<String>();
 	 }
 	
 	@Before public void setUp()
