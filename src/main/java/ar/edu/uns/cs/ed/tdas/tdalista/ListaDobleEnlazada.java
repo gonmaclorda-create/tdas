@@ -5,6 +5,7 @@ import ar.edu.uns.cs.ed.tdas.excepciones.BoundaryViolationException;
 import ar.edu.uns.cs.ed.tdas.excepciones.EmptyListException;
 import ar.edu.uns.cs.ed.tdas.excepciones.InvalidPositionException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class ListaDobleEnlazada<E> implements PositionList<E> {
 
@@ -40,6 +41,8 @@ public class ListaDobleEnlazada<E> implements PositionList<E> {
 
     @Override
     public Position<E> last() {
+        if(isEmpty())
+            throw new EmptyListException("Lista vacia");
         return tail.getAnterior();
     }
 
@@ -80,7 +83,7 @@ public class ListaDobleEnlazada<E> implements PositionList<E> {
     @Override
     public void addAfter(Position<E> p, E element) {
         DNodo<E> ag = checkPosition(p);
-        DNodo<E> nuevo = new DNodo(element, ag, ag.getSiguiente());
+        DNodo<E> nuevo = new DNodo(element, ag.getSiguiente(), ag);
         ag.getSiguiente().setAnterior(nuevo);
         ag.setSiguiente(nuevo);
         cant++;
@@ -122,10 +125,10 @@ public class ListaDobleEnlazada<E> implements PositionList<E> {
     @Override
     public Iterable<Position<E>> positions() {
         ListaDobleEnlazada<Position<E>> l2 = new ListaDobleEnlazada();
-        DNodo<E> actual= head;
-        while(actual.getSiguiente() != tail){
-            actual= actual.getSiguiente(); 
+        DNodo<E> actual= head.getSiguiente();
+        while(actual != tail){
             l2.addLast(actual);
+            actual= actual.getSiguiente(); 
         }
         return l2;
     }
@@ -140,6 +143,42 @@ public class ListaDobleEnlazada<E> implements PositionList<E> {
     } catch (ClassCastException e) {
         throw new InvalidPositionException("p no es un nodo de lista");
     }
+}
+    //clase dentro de clase
+    public class ElementoIterator implements Iterator<E>{
+
+    @SuppressWarnings("FieldMayBeFinal")
+    private PositionList<E> lista;
+    private  Position<E> cursor;
+
+    public ElementoIterator(PositionList<E> l){
+        lista = l;
+        if(l.isEmpty())
+            cursor = null;
+        else
+            cursor = l.first();
+    }
+
+    @Override
+    public boolean hasNext() {
+        return cursor!=null;
+    }
+
+    @Override
+    public E next() {
+        if(cursor==null) throw new NoSuchElementException("posicion nula");
+
+        E element= cursor.element();
+
+        if(cursor!= last()) 
+            cursor = lista.next(cursor);
+        else 
+            cursor = null;
+
+        return element;
+
+    }
+    
 }
 
 }
