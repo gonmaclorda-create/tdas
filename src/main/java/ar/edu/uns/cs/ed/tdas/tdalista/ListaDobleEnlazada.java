@@ -145,144 +145,40 @@ public class ListaDobleEnlazada<E> implements PositionList<E> {
         }
     
     }
-    @SuppressWarnings("unused")
-    private void elementounoydos(E e1, E e2){
-        DNodo<E> ne1= new DNodo(e1);
-        DNodo<E> ne2= new DNodo(e2);
 
-        //si tiene varios elementos
-        if(size()>1){
-            DNodo<E> primero = head.getSiguiente();
-            DNodo<E> segundo = primero.getSiguiente();
-            DNodo<E> ultimo = tail.getAnterior();
-            DNodo<E> anteultimo = ultimo.getAnterior();
- 
-            primero.setSiguiente(ne1);
-            ne1.setAnterior(primero);
-            ne1.setSiguiente(segundo);
-            segundo.setAnterior(ne1);
-
-            ultimo.setAnterior(ne2);
-            ne2.setSiguiente(ultimo);
-            ne2.setAnterior(anteultimo);
-            anteultimo.setSiguiente(ne2);
-
-        }
-        //si tiene un elemento
-        if(size()==1){
-            head.getSiguiente().setSiguiente(ne1);
-            tail.setAnterior(ne2);
-            ne1.setSiguiente(ne2);
-            ne1.setAnterior(head.getSiguiente());
-            ne2.setAnterior(ne1);
-            ne2.setSiguiente(tail);
-        }
-        //lista vacia
-        if(isEmpty()){
-            head.setSiguiente(ne1);
-            tail.setAnterior(ne2);
-            ne1.setSiguiente(ne2);
-            ne2.setAnterior(ne1);
-            ne1.setAnterior(head);
-            ne2.setSiguiente(tail);
-        }
-        cant +=2;
-    }
-
-    public boolean contiene(E e1){
-        Iterator<E> it = this.iterator();
-        while(it.hasNext()) {
-            E elem =  it.next();
-            if(elem.equals(e1))
-                return true;
-            
-        }
-        return false;
-    }
-
-    public int cantveces(E e1){
-        int cveces =0;
-        Iterator<E> it = this.iterator();
-        while (it.hasNext()) {
-            E elem =  it.next();
-            if(elem.equals(e1))
-                cveces++;
-        }
-        return cveces;
-    }
-
-    public boolean almenosn(E e1, int n){
-        int cveces=0;
-        Iterator<E> it=this.iterator();
-        while(it.hasNext() && cveces<n){
-            E elem = it.next();
-            if(elem==e1)
-                cveces++;
-        }
-        return cveces>=n;
-    }
-
-    public PositionList<E> repetido(PositionList<E> l){
-        PositionList<E> nueva = new ListaDobleEnlazada();
-
-        for(E elem: l){
-            nueva.addLast(elem);
-            nueva.addLast(elem);
-        }
-
-        return nueva;
-    }
-
-    public Iterable<E> interseccion(PositionList<E> l1, PositionList<E> l2){
-        //utilizar metodo contiene casteando o recorriendo manualmente con un iterador
-        PositionList<E> eliminados = new ListaDobleEnlazada();
-        for(Position<E> p : l2.positions()){
-            E elem = p.element();
-            //preguntar por casteo
-            if(((ListaDobleEnlazada) l1).contiene(elem)){
-                eliminados.addLast(elem);
-                l2.remove(p);
-            }
-        }
-        return eliminados;
-    }
-
-
-    //clase dentro de clase
     public class ElementoIterator implements Iterator<E>{
 
-    @SuppressWarnings("FieldMayBeFinal")
-    private PositionList<E> lista;
-    private  Position<E> cursor;
+        @SuppressWarnings("FieldMayBeFinal")
+        private PositionList<E> lista;
+        private  Position<E> cursor;
 
-    public ElementoIterator(PositionList<E> l){
-        lista = l;
-        if(l.isEmpty())
-            cursor = null;
-        else
-            cursor = l.first();
+        public ElementoIterator(PositionList<E> l){
+            lista = l;
+            if(l.isEmpty())
+                cursor = null;
+            else
+                cursor = l.first();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return cursor!=null;
+        }
+
+        @Override
+        public E next() {
+            if(cursor==null) throw new NoSuchElementException("no hay mas elementos");
+
+            E element= cursor.element();
+
+            if(cursor!= last()) 
+                cursor = lista.next(cursor);
+            else 
+                cursor = null;
+
+            return element;
+
+        }
+        
     }
-
-    @Override
-    public boolean hasNext() {
-        return cursor!=null;
-    }
-
-    @Override
-    public E next() {
-        if(cursor==null) throw new NoSuchElementException("no hay mas elementos");
-
-        E element= cursor.element();
-
-        if(cursor!= last()) 
-            cursor = lista.next(cursor);
-        else 
-            cursor = null;
-
-        return element;
-
-    }
-    
-}
-
 }
