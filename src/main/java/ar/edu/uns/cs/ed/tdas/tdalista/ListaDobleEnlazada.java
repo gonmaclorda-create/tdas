@@ -4,8 +4,11 @@ import ar.edu.uns.cs.ed.tdas.Position;
 import ar.edu.uns.cs.ed.tdas.excepciones.BoundaryViolationException;
 import ar.edu.uns.cs.ed.tdas.excepciones.EmptyListException;
 import ar.edu.uns.cs.ed.tdas.excepciones.InvalidPositionException;
+import ar.edu.uns.cs.ed.tdas.tdalista.ListaDobleEnlazada.ElementoIterator;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Stack;
 
 public class ListaDobleEnlazada<E> implements PositionList<E> {
 
@@ -124,7 +127,7 @@ public class ListaDobleEnlazada<E> implements PositionList<E> {
 
     @Override
     public Iterable<Position<E>> positions() {
-        ListaDobleEnlazada<Position<E>> l2 = new ListaDobleEnlazada();
+        PositionList<Position<E>> l2 = new ListaDobleEnlazada<Position<E>>();
         DNodo<E> actual= head.getSiguiente();
         while(actual != tail){
             l2.addLast(actual);
@@ -231,22 +234,106 @@ public class ListaDobleEnlazada<E> implements PositionList<E> {
     //Ejercicio 5
     public Iterable<Character> sinInterseccion(PositionList<Character> l1, PositionList<Character> l2){
         PositionList<Character> eliminados = new ListaDobleEnlazada<>();
-        PositionList<Position<Character>> posiciones = new ListaDobleEnlazada<>();
-        for(Position<Character> p: l2.positions()){
-            Character pelem = p.element();
-            if(l1.esta(pelem)){}
+        boolean esta=false;
+        for(Position<Character> p : l2.positions()){
+            Character elem = p.element();
+            //preguntar por casteo
+            esta=false;
+            for(Character elem1:l1){
+                if(elem1.equals(elem))
+                    esta=true;
+            }
+            if(esta){
+                l2.remove(p);
+                eliminados.addLast(elem);
+            }
         }
+        return eliminados;
     }
 
-    private boolean esta(Character c){
-        for(E actual : this){
-            Character a = (Character)actual;
-            if(c==a)
-                return true;
+    //Ejercicio 6) a)
+    public PositionList<E> intercalar(PositionList<E> l1, PositionList<E> l2){
+        PositionList<E> lr = new ListaDobleEnlazada<>();
+        if(l1.isEmpty()&&l2.isEmpty()) return lr;
+        Position<E> c1 = l1.first();
+        Position<E> c2 = l2.first();
+        boolean puedo = (c1!=null||c2!=null);
+        while(puedo){
+            if(c1!=null){
+                lr.addLast(c1.element());
+                c1=l1.next(c1);
+            }
+            if(c2!=null){
+                lr.addLast(c2.element());
+                c2=l2.next(c2);
+            }
+            if(c1==null&&c2==null)
+                puedo=false;
         }
-        return false;
+        return lr;
+    }
+    ///b)
+    public PositionList<Integer> intercalarsinrep(PositionList<Integer> l1, PositionList<Integer> l2){
+        PositionList<Integer> lr = new ListaDobleEnlazada<>();
+        if(l1.isEmpty()&&l2.isEmpty()) return lr;
+        Position<Integer> c1 = l1.first();
+        Position<Integer> c2 = l2.first();
+        boolean puedo = (c1!=null||c2!=null);
+        boolean esta=false;
+        while(puedo){
+            esta=false;
+            if(c1!=null){
+                for(Integer elem1: lr){
+                    if(elem1.equals(c1.element()))
+                        esta=true;
+                }
+                if(!esta){
+                lr.addLast(c1.element());
+                c1=l1.next(c1);
+                }
+            }
+            esta=false;
+            if(c2!=null){
+                for(Integer elem1: lr){
+                    if(elem1.equals(c2.element()))
+                        esta=true;
+                }
+                if(!esta){
+                lr.addLast(c2.element());
+                c2=l2.next(c2);
+                }
+            if(c1==null&&c2==null)
+                puedo=false;
+            }
+        }
+        return lr;
     }
 
+    //Ejercicio 7)
+    public PositionList<E> eliminadorinvertido(PositionList<E> l1, PositionList<E> l2){
+        Stack<E> pila= new Stack<E>();
+        boolean esta=false;
+        for(Position<E> p : l1.positions()){
+            E elem = p.element();
+            esta=false;
+            for(E elem1:l2){
+                if(elem1.equals(elem)){
+                    esta=true;
+                    break;
+                }
+            }
+            if(esta){
+                l1.remove(p);
+            }
+        }
+        for(E e:l2){
+            pila.push(e);
+        }
+        while(!pila.isEmpty()){
+            l1.addLast(pila.pop());
+        }
+        return l1;
+    }
 
 public class ElementoIterator implements Iterator<E>{
 
