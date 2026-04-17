@@ -145,8 +145,110 @@ public class ListaDobleEnlazada<E> implements PositionList<E> {
         }
     
     }
+    //Ejercicio 2
+    public void modificar(E e1, E e2){
+        DNodo<E> n1 = new DNodo<E>(e1);
+        DNodo<E> n2 = new DNodo<E>(e2);
+        if(size()>1){
+            DNodo<E> primero = head.getSiguiente();
+            DNodo<E> segundo = primero.getSiguiente();
+            DNodo<E> ultimo = tail.getAnterior();
+            DNodo<E> anteultimo = ultimo.getAnterior();
 
-    public class ElementoIterator implements Iterator<E>{
+            primero.setSiguiente(n1);
+            n1.setAnterior(primero);
+            n1.setSiguiente(segundo);
+            segundo.setAnterior(n1);
+
+            ultimo.setAnterior(n2);
+            n2.setSiguiente(ultimo);
+            n2.setAnterior(anteultimo);
+            anteultimo.setSiguiente(n2);
+        }
+        if(isEmpty()){
+            head.setSiguiente(n1);
+            n1.setAnterior(head);
+            n1.setSiguiente(n2);
+            n2.setAnterior(n1);
+            n2.setSiguiente(tail);
+            tail.setAnterior(n2);
+        }
+        if(size()==1){
+            DNodo<E> unico = head.getSiguiente();
+            unico.setSiguiente(n1);
+            n1.setAnterior(unico);
+            n1.setSiguiente(n2);
+            n2.setAnterior(n1);
+            n2.setSiguiente(tail);
+            tail.setSiguiente(n2);
+        }
+    }
+
+    //Ejercicio 3
+    //a)
+    public boolean contiene(E e1){
+        Iterator<E> it = this.iterator();
+        while(it.hasNext()){
+            E elemento = it.next();
+            if(elemento.equals(e1))
+                return true;
+        }
+        return false;
+    }
+    //b)
+    public int cantidadDe(E e1){
+        int cant=0;
+        Iterator<E> it = this.iterator();
+        while(it.hasNext()){
+            E elemento = it.next();
+            if(elemento.equals(e1))
+                cant++;    
+        }
+        return cant;
+    }
+    //c)
+    public boolean nVeces(E x, int n){
+        int cant=0;
+        Iterator<E> it = this.iterator();
+        while(it.hasNext()){
+            E elemento = it.next();
+            if(elemento==x)
+                cant++;
+            if(cant==n);
+                return true;
+        }
+        return false;
+    }
+    //Ejercicio 4
+    public ListaDobleEnlazada<E> repetir(PositionList<E> l){
+        ListaDobleEnlazada<E> lista = new ListaDobleEnlazada<>();
+        for(E elemento : l){
+            lista.addLast(elemento);
+            lista.addLast(elemento);
+        }
+        return lista;
+    }
+    //Ejercicio 5
+    public Iterable<Character> sinInterseccion(PositionList<Character> l1, PositionList<Character> l2){
+        PositionList<Character> eliminados = new ListaDobleEnlazada<>();
+        PositionList<Position<Character>> posiciones = new ListaDobleEnlazada<>();
+        for(Position<Character> p: l2.positions()){
+            Character pelem = p.element();
+            if(l1.esta(pelem)){}
+        }
+    }
+
+    private boolean esta(Character c){
+        for(E actual : this){
+            Character a = (Character)actual;
+            if(c==a)
+                return true;
+        }
+        return false;
+    }
+
+
+public class ElementoIterator implements Iterator<E>{
 
         @SuppressWarnings("FieldMayBeFinal")
         private PositionList<E> lista;
