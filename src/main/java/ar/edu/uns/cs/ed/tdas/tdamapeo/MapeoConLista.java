@@ -11,10 +11,11 @@ import ar.edu.uns.cs.ed.tdas.excepciones.EmptyListException;
 import ar.edu.uns.cs.ed.tdas.excepciones.InvalidKeyException;
 
 public class MapeoConLista<K,V> implements Map<K,V>{
-    protected ListaDobleEnlazada<Entry<K,V>> S;
+    protected ListaDobleEnlazada<Entrada<K,V>> S;
+	private int n;
     
     public MapeoConLista(){
-        S = new ListaDobleEnlazada<Entry<K,V>>();
+        S = new ListaDobleEnlazada<Entrada<K,V>>();
     }
 	/**
 	 * Busca una entrada con clave igual a una clave dada y devuelve el valor asociado, si no existe retorna nulo.
@@ -27,7 +28,7 @@ public class MapeoConLista<K,V> implements Map<K,V>{
 		if(key==null)
 			throw new InvalidKeyException("La clave no es válida");	
 		// Para cada posición p de la lista S hacer:
-		for( Position<Entry<K,V>> p : S.positions() )
+		for( Position<Entrada<K,V>> p : S.positions() )
 		// Si la clave de la entrada actual es key:
 		if( p.element().getKey().equals( key ) )
 			// Retornar el valor de la entrada actual:
@@ -44,24 +45,19 @@ public class MapeoConLista<K,V> implements Map<K,V>{
 	 * @throws InvalidKeyException si la clave pasada por parámetro es inválida.
 	 */
 	@Override
-	public V put(K key, V value) {
-		if(key==null)
-			throw new InvalidKeyException("La clave no es válida");
-		// Para cada posición p de la lista S hacer:
-		for( Position<Entry<K,V>> p : S.positions() )
-		// Si la clave de la entrada en la posición p es key:
-		if( p.element().getKey().equals( key ) ) {
-			// Salvar el valor de la entrada en aux
-			V aux = p.element().getValue();
-			// Setear el nuevo valor de la entrada a value
-			p.element().setValue( value );
-			// Retornar el viejo valor
-			return aux;
-		}
-		// Si salí del for-each entonces no encontré una entrada con clave key
-		S.addLast(new Entry<K,V>(key, value) ); // Inserto una nueva entrada (key,value)
-		return null; // Retorno null para indicar que inserté una nueva entrada
-	}
+    public V put(K key, V value) {
+        for(Entrada<K,V> e : S){
+            if(e.getKey().equals(key)){
+                V valor = e.getValue();
+                e.setValue(value);
+                return valor;
+            }
+        }
+        S.addLast(new Entrada<>(key, value));
+        n++;
+        return null;
+
+    }
 	/**
 	 * Remueve la entrada con la clave dada en el mapeo y devuelve su valor, o nulo si no fue encontrada.
 	 * @param e Entrada a remover.
@@ -73,7 +69,7 @@ public class MapeoConLista<K,V> implements Map<K,V>{
 		if(key==null)
 			throw new InvalidKeyException("La clave no es válida");
 		// Para cada posición p de S hacer:
-		for( Position<Entry<K,V>> p : S.positions() )
+		for( Position<Entrada<K,V>> p : S.positions() )
 			// Si la entrada de la posición p tiene clave key:
 			if( p.element().getKey().equals( key ) ) {
 				// Salvar el valor de la entrada corriente en value:
@@ -103,25 +99,34 @@ public class MapeoConLista<K,V> implements Map<K,V>{
 	 */
 	@Override
 	public int size() {
-		return S.size();
+		return n;
 	}
-	/**
-	 * Retorna una colección iterable con todas las claves del mapeo.
-	 * @return Colección iterable con todas las claves del mapeo.
-	 */
 	@Override
-	public Coleccion<K> keys() {
-		Coleccion<K>
-	}
+    public Iterable<K> keys() {
+        ListaDobleEnlazada<K> llaves = new ListaDobleEnlazada<>();
+        for(Entrada<K,V> e : S){
+            llaves.addLast(e.getKey());
+        }
 
-	@Override
-	public Coleccion<V> values() {
-		return null;
-	}
+        return llaves;
+    }
 
-	@Override
-	public Coleccion<Entry<K, V>> entries() {
-		return null;
-	}
+    @Override
+    public Iterable<V> values() {
+        ListaDobleEnlazada<V> valor = new ListaDobleEnlazada<>();
+        for(Entrada<K,V> e : S){
+            valor.addLast(e.getValue());
+        }
 
+        return valor;
+    }
+
+    @Override
+    public Iterable<Entry<K,V>> entries() {
+        ListaDobleEnlazada<Entry<K,V>> lista = new ListaDobleEnlazada<>();
+        for(Entrada<K,V> e : S){
+            lista.addLast(e);
+        }
+        return lista;
+    }
 }
