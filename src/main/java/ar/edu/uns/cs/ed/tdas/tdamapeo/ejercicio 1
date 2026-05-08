@@ -1,0 +1,44 @@
+public PositionList<Integer,Integer> incisoA(Map<Integer,Integer> m1, Map<Integer,Integer> m2){
+    PositionList<Integer,Integer> l=new ListaDobleEnlazada();
+    for(Entry<Integer,Integer> e1 : m.entries()){
+        Integer k1 = e1.getKey();
+        Integer v1 = e1.getValue(k1);
+        Integer v2 = m2.getValue(k1);
+        if(v2!=null&&v1.equals(v2)){
+            l.addLast(new Pair<>(k,v1));
+            l.addLast(new Pair<>(k,v2));
+        }
+    }
+    return l;
+}
+
+public boolean incisoB(Map<K,V> m1, Map<K,V> m2){
+    for(Entry<K,V> e1 : m.entries()){
+        Integer k1 = e1.getKey();
+        if(m2.getValue(k1)==null)
+            return false;
+    }
+    return true;
+}
+
+public Dictionary<K,V> acomodar(Dictionary<K,V> d){
+    Map<K,V> aux = new MapeoConLista<>();
+    Dictionary<K,V> dRes = new DiccionarioConLista<>();
+    for(Entry<K,V> d1: d.entries())
+        aux.put(d1.getKey(),d1.getValue())
+    for(Entry<K,V> m1: aux.entries())
+        dRes.insert(m1.getKey(),m1.getValue());
+    return dRes;
+}
+
+public Map<K,V> incisioD(PositionList<Character> j){
+    Map<K,V> m = new MApeoConLista<>();
+    for(Position<Character> p : j.positions()){
+        Character c =p.element();
+        if(m.getValue(c)==null)
+            m.put(c,1);
+        else
+            m.put(c,m.getvalue(c)+1);
+    }
+    return m;
+}
