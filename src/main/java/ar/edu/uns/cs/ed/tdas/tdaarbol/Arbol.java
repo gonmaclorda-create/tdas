@@ -2,18 +2,22 @@ package ar.edu.uns.cs.ed.tdas.tdaarbol;
 
 import java.util.Iterator;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import ar.edu.uns.cs.ed.tdas.Position;
 import ar.edu.uns.cs.ed.tdas.excepciones.BoundaryViolationException;
 import ar.edu.uns.cs.ed.tdas.excepciones.EmptyTreeException;
 import ar.edu.uns.cs.ed.tdas.excepciones.InvalidOperationException;
 import ar.edu.uns.cs.ed.tdas.excepciones.InvalidPositionException;
+import ar.edu.uns.cs.ed.tdas.tdalista.ListaDobleEnlazada;
+import ar.edu.uns.cs.ed.tdas.tdalista.ListaDobleEnlazada.ElementoIterator;
 
 public class Arbol<E> implements Tree<E>{
-    protected TNodo<E> raiz;
+    protected TNodo<E> root;
     protected int n;
 
     public Arbol(){
-        raiz=null;
+        root=null;
         n=0;
     }
 
@@ -52,8 +56,7 @@ public class Arbol<E> implements Tree<E>{
 	 */
     @Override
     public E replace(Position<E> v, E e) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'replace'");
+        
     }
     /**
 	 * Devuelve la posición de la raíz del árbol.
@@ -62,8 +65,10 @@ public class Arbol<E> implements Tree<E>{
 	 */
     @Override
     public Position<E> root() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'root'");
+		if(root==null)
+			throw new EmptyTreeException("El arbol esta vacio");
+		return root;
+
     }
 
     /**
@@ -74,7 +79,12 @@ public class Arbol<E> implements Tree<E>{
 	 * @throws BoundaryViolationException si la posición pasada por parámetro corresponde a la raíz del árbol.
 	 */
     @Override
-	public Position<E> parent(Position<E> v){}
+	public Position<E> parent(Position<E> v){
+		TNodo<E> ve = checkPosition(v);
+		if(ve==root)
+			throw new BoundaryViolationException("La posicion pasada por parametro es la raiz del arbol");
+		return ve.getPadre();
+	}
 	
 	/**
 	 * Devuelve una colección iterable de los hijos del nodo correspondiente a una posición dada.
@@ -83,7 +93,13 @@ public class Arbol<E> implements Tree<E>{
 	 * @throws InvalidPositionException si la posición pasada por parámetro es inválida.
 	 */
     @Override
-	public Iterable<Position<E>> children(Position<E> v){}
+	public Iterable<Position<E>> children(Position<E> v){
+		TNodo<E> ve = checkPosition(v);
+		ListaDobleEnlazada<Position<E>> lista = new ListaDobleEnlazada<Position<E>>();
+		for(TNodo<E> n : ve.getHijos())
+			lista.addLast(n);
+		return lista; 
+	}
 	
 	/**
 	 * Consulta si una posición corresponde a un nodo interno.
@@ -92,7 +108,13 @@ public class Arbol<E> implements Tree<E>{
 	 * @throws InvalidPositionException si la posición pasada por parámetro es inválida.
 	 */
     @Override
-	public boolean isInternal(Position<E> v){}
+	public boolean isInternal(Position<E> v){
+		TNodo<E> ve = checkPosition(v);
+		if(ve.getHijos()!=null)
+			return true;
+		return false;
+
+	}
 	
 	/**
 	 * Consulta si una posición dada corresponde a un nodo externo.
@@ -101,7 +123,12 @@ public class Arbol<E> implements Tree<E>{
 	 * @throws InvalidPositionException si la posición pasada por parámetro es inválida.
 	 */
     @Override
-	public boolean isExternal(Position<E> v){}
+	public boolean isExternal(Position<E> v){
+		TNodo<E> ve =  checkPosition(v);
+		if(ve.getHijos()==null)
+			return true;
+		return false;
+	}
 	
 	/**
 	 * Consulta si una posición dada corresponde a la raíz del árbol.
@@ -110,7 +137,10 @@ public class Arbol<E> implements Tree<E>{
 	 * @throws InvalidPositionException si la posición pasada por parámetro es inválida.
 	 */
     @Override
-	public boolean isRoot(Position<E> v){}
+	public boolean isRoot(Position<E> v){
+		TNodo<E> ve = checkPosition(v);
+		return ve==root;
+	}
 	
 	/**
 	 * Crea un nodo con rótulo e como raíz del árbol.
@@ -118,7 +148,12 @@ public class Arbol<E> implements Tree<E>{
 	 * @throws InvalidOperationException si el árbol ya tiene un nodo raíz.
 	 */
     @Override
-	public void createRoot(E e){}
+	public void createRoot(E e){
+		if(root!=null)
+			throw new InvalidOperationException("El arbol ya tiene una raiz");
+		TNodo<E> v = new TNodo<>(e);
+		root=v;
+	}
 	
 	/**
 	 * Agrega un nodo con rótulo e como primer hijo de un nodo dado.
@@ -128,7 +163,9 @@ public class Arbol<E> implements Tree<E>{
 	 * @throws InvalidPositionException si la posición pasada por parámetro es inválida o el árbol está vacío.
 	 */
     @Override
-	public Position<E> addFirstChild(Position<E> p, E e){}
+	public Position<E> addFirstChild(Position<E> p, E e){
+		TNodo<E> v = checkPosition(p);
+	}
 	
 	/**
 	 * Agrega un nodo con rótulo e como último hijo de un nodo dado.
@@ -187,4 +224,15 @@ public class Arbol<E> implements Tree<E>{
 	 */
     @Override
 	public void removeNode (Position<E> p){}
+
+
+	private TNodo<E> checkPosition(Position<E> p){
+		if (p==null) throw new InvalidPositionException("p nulo");
+		try{
+			return (TNodo<E>) p;
+		}catch(ClassCastException e){
+			throw new InvalidPositionException("Posicion invalida");
+		}
+	}
+
 }

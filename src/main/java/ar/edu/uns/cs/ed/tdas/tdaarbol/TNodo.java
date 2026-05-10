@@ -1,8 +1,9 @@
 package ar.edu.uns.cs.ed.tdas.tdaarbol;
 
+import ar.edu.uns.cs.ed.tdas.Position;
 import ar.edu.uns.cs.ed.tdas.tdalista.ListaDobleEnlazada;
 
-public class TNodo<E> {
+public class TNodo<E> implements Position<E>{
     private E elemento;
     private TNodo<E> padre;
     private ListaDobleEnlazada<TNodo<E>> hijos;
