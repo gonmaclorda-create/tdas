@@ -153,6 +153,7 @@ public class Arbol<E> implements Tree<E>{
 			throw new InvalidOperationException("El arbol ya tiene una raiz");
 		TNodo<E> v = new TNodo<>(e);
 		root=v;
+		n++;
 	}
 	
 	/**
@@ -165,6 +166,11 @@ public class Arbol<E> implements Tree<E>{
     @Override
 	public Position<E> addFirstChild(Position<E> p, E e){
 		TNodo<E> v = checkPosition(p);
+		TNodo<E> h = new TNodo<E>(e);
+		v.getHijos().addFirst(h);
+		h.setPadre(v);
+		n++;
+		return h;
 	}
 	
 	/**
@@ -175,7 +181,14 @@ public class Arbol<E> implements Tree<E>{
 	 * @throws InvalidPositionException si la posición pasada por parámetro es inválida o el árbol está vacío.
 	 */
     @Override
-	public Position<E> addLastChild(Position<E> p, E e){}
+	public Position<E> addLastChild(Position<E> p, E e){
+		TNodo<E> v = checkPosition(p);
+		TNodo<E> h = new TNodo(e);
+		v.getHijos().addLast(h);
+		h.setPadre(v);
+		n++;
+		return h;
+	}
 	
 	/**
 	 * Agrega un nodo con rótulo e como hijo de un nodo padre dado. El nuevo nodo se agregará delante de otro nodo también dado.
@@ -186,7 +199,18 @@ public class Arbol<E> implements Tree<E>{
 	 * @throws InvalidPositionException si la posición pasada por parámetro es inválida, o el árbol está vacío, o la posición rb no corresponde a un nodo hijo del nodo referenciado por p.
 	 */
     @Override
-	public Position<E> addBefore(Position<E> p, Position<E> rb, E e){}
+	public Position<E> addBefore(Position<E> p, Position<E> rb, E e){
+		TNodo<E> padre = checkPosition(p);
+        TNodo<E> antes = checkPosition(rb);
+        TNodo<E> insertar = new TNodo<>(e,padre);
+        n++;
+        for(Position<TNodo<E>> nuevo : padre.getHijos().positions()){
+            if(nuevo.element()==antes){
+                padre.getHijos().addBefore(nuevo, insertar);
+            }
+        }
+        return insertar;
+	}
 
 	/**
 	 * Agrega un nodo con rótulo e como hijo de un nodo padre dado. El nuevo nodo se agregará a continuación de otro nodo también dado.
