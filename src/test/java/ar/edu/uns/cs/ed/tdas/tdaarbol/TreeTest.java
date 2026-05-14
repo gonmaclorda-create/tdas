@@ -12,7 +12,7 @@ import ar.edu.uns.cs.ed.tdas.tdalista.PositionList;
 import ar.edu.uns.cs.ed.tdas.Position;
 import ar.edu.uns.cs.ed.tdas.excepciones.*;
 import ar.edu.uns.cs.ed.tdas.tdacola.ArrayQueue;
-import ar.edu.uns.cs.ed.tdas.tdalista.ListaDoblementeEnlazada;
+import ar.edu.uns.cs.ed.tdas.tdalista.ListaDobleEnlazada;
 
 
 public class TreeTest {
@@ -810,13 +810,13 @@ public class TreeTest {
 			T.addBefore(h1, h2, 5);
 			chequearPadre(T.root());
 			// caso de prueba para los hijos de root
-			hijosRoot = new ListaDoblementeEnlazada<Integer>();
+			hijosRoot = new ListaDobleEnlazada<Integer>();
 			hijosRoot.addFirst(2);
 			hijosRoot.addFirst(7);
 			hijosRoot.addFirst(3);
 			hijosRoot.addFirst(6);
 			hijosRoot.addFirst(9);
-			hijos = new ListaDoblementeEnlazada<Integer>();
+			hijos = new ListaDobleEnlazada<Integer>();
 			for (Position<Integer> n : T.children(T.root())) {
 				hijos.addLast(n.element());
 			}
@@ -830,10 +830,10 @@ public class TreeTest {
 
 			}
 			// caso de prueba para los hijos de h1
-			hijosH1 = new ListaDoblementeEnlazada<Integer>();
+			hijosH1 = new ListaDobleEnlazada<Integer>();
 			hijosH1.addFirst(4);
 			hijosH1.addFirst(5);
-			hjsH1 = new ListaDoblementeEnlazada<Integer>();
+			hjsH1 = new ListaDobleEnlazada<Integer>();
 			for (Position<Integer> n : T.children(h1)) {
 				hjsH1.addLast(n.element());
 			}
@@ -931,13 +931,13 @@ public class TreeTest {
 			T.addAfter(h1, h2, 5);
 			chequearPadre(T.root());
 			// caso de prueba para los hijos de root
-			PositionList<Integer> hijosRoot = new ListaDoblementeEnlazada<Integer>();
+			PositionList<Integer> hijosRoot = new ListaDobleEnlazada<Integer>();
 			hijosRoot.addFirst(2);
 			hijosRoot.addFirst(7);
 			hijosRoot.addFirst(3);
 			hijosRoot.addFirst(6);
 			hijosRoot.addFirst(9);
-			PositionList<Integer> hijos = new ListaDoblementeEnlazada<Integer>();
+			PositionList<Integer> hijos = new ListaDobleEnlazada<Integer>();
 			for (Position<Integer> n : T.children(T.root())) {
 				hijos.addFirst(n.element());
 			}
@@ -951,10 +951,10 @@ public class TreeTest {
 
 			}
 			// caso de prueba para los hijos de h1
-			hijosH1 = new ListaDoblementeEnlazada<Integer>();
+			hijosH1 = new ListaDobleEnlazada<Integer>();
 			hijosH1.addFirst(5);
 			hijosH1.addFirst(4);
-			hjsH1 = new ListaDoblementeEnlazada<Integer>();
+			hjsH1 = new ListaDobleEnlazada<Integer>();
 			for (Position<Integer> n : T.children(h1)) {
 				hjsH1.addLast(n.element());
 			}
@@ -1140,7 +1140,7 @@ public class TreeTest {
 				fail("children() no debería lanzar la excepción InvalidPositionException para una posición válida.");
 		}
 		// Intento eliminar nodos internos.
-		lista = new ListaDoblementeEnlazada<Integer>();
+		lista = new ListaDobleEnlazada<Integer>();
 		for (i = 1; i <= 12; i++)
 			lista.addLast(i);
 		chequearHijosNiveles2(lista);
@@ -1151,7 +1151,7 @@ public class TreeTest {
 				pos = it.next();
 			T.removeInternalNode(pos);
 			chequearPadre(T.root());
-			lista = new ListaDoblementeEnlazada<Integer>();
+			lista = new ListaDobleEnlazada<Integer>();
 			for (i = 1; i <= 4; i++)
 				lista.addLast(i);
 			p1 = lista.last();
@@ -1197,7 +1197,7 @@ public class TreeTest {
 					.equals(3));
 			T.removeInternalNode(pos);
 			chequearPadre(T.root());
-			lista = new ListaDoblementeEnlazada<Integer>();
+			lista = new ListaDobleEnlazada<Integer>();
 			lista.addLast(1);
 			lista.addLast(6);
 			lista.addLast(7);
@@ -1265,7 +1265,7 @@ public class TreeTest {
 
 		T = getTree();
 		cargarArbol2(T);
-		lista = new ListaDoblementeEnlazada<Position<Integer>>();
+		lista = new ListaDobleEnlazada<Position<Integer>>();
 		try {
 			nodosEnNivel(T.root(), 1, 1, lista);
 			it = lista.iterator();
@@ -1291,7 +1291,7 @@ public class TreeTest {
 		}
 		// Elimino todos los nodos del nivel 1
 		try {
-			lista = new ListaDoblementeEnlazada<Position<Integer>>();
+			lista = new ListaDobleEnlazada<Position<Integer>>();
 			nodosEnNivel(T.root(), 1, 1, lista);
 			it = lista.iterator();
 			while (it.hasNext())
@@ -1315,7 +1315,7 @@ public class TreeTest {
 		}
 
 		try {
-			lista = new ListaDoblementeEnlazada<Position<Integer>>();
+			lista = new ListaDobleEnlazada<Position<Integer>>();
 			nodosEnNivel(T.root(), 1, 1, lista);
 			it = lista.iterator();
 			while (it.hasNext())

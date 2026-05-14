@@ -2,15 +2,16 @@ package ar.edu.uns.cs.ed.tdas.tdaarbol;
 
 import java.util.Iterator;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+//import java.util.NoSuchElementException;
 import ar.edu.uns.cs.ed.tdas.Position;
+import ar.edu.uns.cs.ed.tdas.tdalista.PositionList;
+import ar.edu.uns.cs.ed.tdas.tdamapeo.MapeoConLista;
 import ar.edu.uns.cs.ed.tdas.excepciones.BoundaryViolationException;
 import ar.edu.uns.cs.ed.tdas.excepciones.EmptyTreeException;
 import ar.edu.uns.cs.ed.tdas.excepciones.InvalidOperationException;
 import ar.edu.uns.cs.ed.tdas.excepciones.InvalidPositionException;
 import ar.edu.uns.cs.ed.tdas.tdalista.ListaDobleEnlazada;
-import ar.edu.uns.cs.ed.tdas.tdalista.ListaDobleEnlazada.ElementoIterator;
+//import ar.edu.uns.cs.ed.tdas.tdalista.ListaDobleEnlazada.ElementoIterator;
 
 public class Arbol<E> implements Tree<E>{
     protected TNodo<E> root;
@@ -36,7 +37,10 @@ public class Arbol<E> implements Tree<E>{
 	 */
     @Override
     public Iterator<E> iterator() {
-        
+        PositionList<E> ld = new ListaDobleEnlazada<>();
+		for(Position<E> p : positions())
+			ld.addLast(p.element());
+		return ld.iterator();
     }
     /**
 	 * Devuelve una colección iterable de las posiciones de los nodos del árbol.
@@ -44,8 +48,9 @@ public class Arbol<E> implements Tree<E>{
 	 */
     @Override
     public Iterable<Position<E>> positions() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'positions'");
+        PositionList<Position<E>> lista = new ListaDobleEnlazada<>();
+		if(!isEmpty()) preorden(root,lista);
+		return lista;
     }
     /**
 	 * Reemplaza el elemento almacenado en la posición dada por el elemento pasado por parámetro. Devuelve el elemento reemplazado.
@@ -56,7 +61,10 @@ public class Arbol<E> implements Tree<E>{
 	 */
     @Override
     public E replace(Position<E> v, E e) {
-        
+        TNodo<E> b = checkPosition(v);
+		E elemento = b.element();
+		b.setElemento(e);
+		return elemento;
     }
     /**
 	 * Devuelve la posición de la raíz del árbol.
@@ -165,6 +173,7 @@ public class Arbol<E> implements Tree<E>{
 	 */
     @Override
 	public Position<E> addFirstChild(Position<E> p, E e){
+		if(root==null) throw new InvalidPositionException("El arbol no tiene raiz");
 		TNodo<E> v = checkPosition(p);
 		TNodo<E> h = new TNodo<E>(e);
 		v.getHijos().addFirst(h);
@@ -182,6 +191,7 @@ public class Arbol<E> implements Tree<E>{
 	 */
     @Override
 	public Position<E> addLastChild(Position<E> p, E e){
+		if(root==null) throw new InvalidPositionException("El arbol no tiene raiz");
 		TNodo<E> v = checkPosition(p);
 		TNodo<E> h = new TNodo(e);
 		v.getHijos().addLast(h);
@@ -200,6 +210,7 @@ public class Arbol<E> implements Tree<E>{
 	 */
     @Override
 	public Position<E> addBefore(Position<E> p, Position<E> rb, E e){
+		if(root==null) throw new InvalidPositionException("El arbol no tiene raiz");
 		TNodo<E> padre = checkPosition(p);
         TNodo<E> antes = checkPosition(rb);
         TNodo<E> insertar = new TNodo<>(e,padre);
@@ -221,7 +232,19 @@ public class Arbol<E> implements Tree<E>{
 	 * @throws InvalidPositionException si la posición pasada por parámetro es inválida, o el árbol está vacío, o la posición lb no corresponde a un nodo hijo del nodo referenciado por p.
 	 */
     @Override
-	public Position<E> addAfter (Position<E> p, Position<E> lb, E e){}
+	public Position<E> addAfter (Position<E> p, Position<E> lb, E e){
+		if(root==null) throw new InvalidPositionException("El arbol no tiene raiz");
+		TNodo<E> padre = checkPosition(p);
+        TNodo<E> antes = checkPosition(lb);
+        TNodo<E> insertar = new TNodo<>(e,padre);
+        n++;
+        for(Position<TNodo<E>> nuevo : padre.getHijos().positions()){
+            if(nuevo.element()==antes){
+                padre.getHijos().addAfter(nuevo, insertar);
+            }
+        }
+        return insertar;
+	}
 	
 	/**
 	 * Elimina el nodo referenciado por una posición dada, si se trata de un nodo externo. 
@@ -229,7 +252,23 @@ public class Arbol<E> implements Tree<E>{
 	 * @throws InvalidPositionException si la posición pasada por parámetro es inválida o no corresponde a un nodo externo, o el árbol está vacío.
 	 */
     @Override
-	public void removeExternalNode (Position<E> p){}
+	public void removeExternalNode (Position<E> p){
+		if(root==null) throw new InvalidPositionException("El arbol no tiene raiz");
+		TNodo<E> pe = checkPosition(p);
+		if(isInternal(p)) throw new InvalidPositionException("Es interno");
+		if(pe==root){
+			root=null;
+			n--;
+			return;
+		}
+		if(pe.getHijos().isEmpty()){
+			for(Position<TNodo<E>> nodo : pe.getPadre().getHijos().positions())
+				if(nodo.element()==pe){
+					pe.getPadre().getHijos().remove(nodo);
+					n--;
+				}
+		}
+	}
 	
 	/**
 	 * Elimina el nodo referenciado por una posición dada, si se trata de un nodo interno. Los hijos del nodo eliminado lo reemplazan en el mismo orden en el que aparecen. 
@@ -238,7 +277,31 @@ public class Arbol<E> implements Tree<E>{
 	 * @throws InvalidPositionException si la posición pasada por parámetro es inválida o no corresponde a un nodo interno o corresponde a la raíz (con más de un hijo), o el árbol está vacío.
 	 */
     @Override
-	public void removeInternalNode (Position<E> p){}
+	public void removeInternalNode (Position<E> p){
+		if(root==null) throw new InvalidPositionException("El arbol no tiene raiz");
+		TNodo<E> pe = checkPosition(p);
+		if(pe==root&&pe.getHijos().size()>1) throw new InvalidPositionException("La raiz tiene mas de un hijo");
+		if(pe==root&&pe.getHijos().size()==1){
+			root = pe.getHijos().first().element();
+			root.setPadre(null);
+			n--;
+			return;
+		}
+		if(pe!=root){
+			PositionList<TNodo<E>> hijoss = pe.getPadre().getHijos();
+			for(Position<TNodo<E>> buscar: hijoss.positions()){
+				if(buscar.element()==pe){
+					for(TNodo<E> h : pe.getHijos()){
+						hijoss.addBefore(buscar,h);
+						h.setPadre(pe.getPadre());
+					}
+					n--;
+					hijoss.remove(buscar);
+					break;
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Elimina el nodo referenciado por una posición dada. Si se trata de un nodo interno, los hijos del nodo eliminado lo reemplazan en el mismo orden en el que aparecen. 
@@ -247,7 +310,10 @@ public class Arbol<E> implements Tree<E>{
 	 * @throws InvalidPositionException si la posición pasada por parámetro es inválida o corresponde a la raíz (con más de un hijo), o el árbol está vacío.
 	 */
     @Override
-	public void removeNode (Position<E> p){}
+	public void removeNode (Position<E> p){
+		if(isExternal(p)) removeExternalNode(p);
+		else removeInternalNode(p);
+	}
 
 
 	private TNodo<E> checkPosition(Position<E> p){
@@ -258,5 +324,27 @@ public class Arbol<E> implements Tree<E>{
 			throw new InvalidPositionException("Posicion invalida");
 		}
 	}
+	private void preorden(TNodo<E> nodo,PositionList<Position<E>> lista){
+		lista.addLast(nodo);
+		for(TNodo<E> p : nodo.getHijos())
+			preorden(p,lista);
+	}
 
+	//ejercicio 2
+	public void eliminarUltimoHijo(Position<E> p){
+		TNodo<E> v =  checkPosition(p);
+		if(root==v) throw new InvalidPositionException("La raiz no es ultimo hijo");
+		ListaDobleEnlazada<TNodo<E>> hijoss = v.getPadre().getHijos();
+		if(hijoss.last().element()==v){
+			hijoss.remove(hijoss.last());
+			n--;
+		}else throw new InvalidPositionException("p no es ultimo hijo");
+	}
+
+	//ejercicio 3
+	public Map<Character,Integer> cantidadRepeticiones(Tree<Character> t){
+		if(isEmpty()) throw new EmptyTreeException("Arbol vacio");
+		MapeoConLista<Character,Integer> m = new MapeoConLista<>();
+		for()
+	}
 }
