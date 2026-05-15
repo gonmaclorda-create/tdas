@@ -3,6 +3,7 @@ package ar.edu.uns.cs.ed.tdas.tdaarbol;
 import java.util.Iterator;
 
 //import java.util.NoSuchElementException;
+import ar.edu.uns.cs.ed.tdas.tdamapeo.Map;
 import ar.edu.uns.cs.ed.tdas.Position;
 import ar.edu.uns.cs.ed.tdas.tdalista.PositionList;
 import ar.edu.uns.cs.ed.tdas.tdamapeo.MapeoConLista;
@@ -11,7 +12,7 @@ import ar.edu.uns.cs.ed.tdas.excepciones.EmptyTreeException;
 import ar.edu.uns.cs.ed.tdas.excepciones.InvalidOperationException;
 import ar.edu.uns.cs.ed.tdas.excepciones.InvalidPositionException;
 import ar.edu.uns.cs.ed.tdas.tdalista.ListaDobleEnlazada;
-//import ar.edu.uns.cs.ed.tdas.tdalista.ListaDobleEnlazada.ElementoIterator;
+import ar.edu.uns.cs.ed.tdas.tdalista.ListaDobleEnlazada.ElementoIterator;
 
 public class Arbol<E> implements Tree<E>{
     protected TNodo<E> root;
@@ -343,8 +344,52 @@ public class Arbol<E> implements Tree<E>{
 
 	//ejercicio 3
 	public Map<Character,Integer> cantidadRepeticiones(Tree<Character> t){
-		if(isEmpty()) throw new EmptyTreeException("Arbol vacio");
-		MapeoConLista<Character,Integer> m = new MapeoConLista<>();
-		for()
+		MapeoConLista<Character,Integer> mapa = new MapeoConLista<>();
+		if(t.isEmpty()||t.root()==null) return mapa;
+		for(Position<Character> nodo : t.positions()){
+			Character car = nodo.element();
+			Integer cant = mapa.get(car);
+			if(cant==null){
+				mapa.put(car,1);
+			}else{mapa.put(car,cant++);}
+		}
+		return mapa;
 	}
+
+	//ejercicio 4
+	public Iterable<Position<String>> repeticionDePalabras(Tree<String> a, String s){
+		ListaDobleEnlazada<Position<String>> lista = new ListaDobleEnlazada<>();
+		if(a.isEmpty()||a.root()==null) return lista;
+		for(Position<String> nodo : a.positions()){
+			String pal = nodo.element();
+			if(pal==s)
+				lista.addLast(nodo);
+		}
+		return lista;
+	}
+
+	//ejercicio 5
+	public int eliminar(Tree<E> a, E e){
+		int cont = 0; //tiempo c1
+		if(a.isEmpty()||a.root()==null) return cont; // tiempo c2+c3
+		for(Position<E> nodo : a.positions()){/// tiempo n
+			E elem = nodo.element(); // tiempo c4
+			if(elem.equals(e)){      // tiempo c5
+				a.removeNode(nodo);  // tiempo c6
+				cont++;				 // tiempo c7
+			}
+		}
+		return cont;				// tiempo c8
+	} // T(n)= c1+max((c2+c3),(n(c4,c5,c6,c7)))+c8=O(n)
+
+	//ejercicio 6
+	public boolean pertenece(Tree<Integer> a, int n){
+		if(a.isEmpty()||a.root()==null) return false;   //tiempo c1+c2+c3
+		Iterator<Integer> iterador = a.iterator();		//tiempo c4+c5
+		while(iterador.hasNext()){						//tiempo n iteraciones que depende de la cantidad de nodos del arbol
+			if(iterador.next()==n)						//tiempo c6+c7
+				return true;							//tiempo c8
+		}												// n(c6+c7+c8)
+		return false;									//tiempo c9
+	}													//T(n)=c1+c2+max((c3),(c4+c5+n(c6+c7+c8)+c9?))=O(n)
 }
