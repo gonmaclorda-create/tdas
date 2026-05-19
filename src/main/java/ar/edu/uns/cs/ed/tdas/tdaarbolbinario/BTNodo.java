@@ -1,10 +1,11 @@
 package ar.edu.uns.cs.ed.tdas.tdaarbolbinario;
+import ar.edu.uns.cs.ed.tdas.Position;
 
-public class BTNodo<E> implements BTPosition<E>{
+public class BTNodo<E> implements Position<E>{
     private E element;
-    private BTPosition<E> left, right, parent;
+    private BTNodo<E> left, right, parent;
 
-    public BTNodo( E element, BTPosition<E> left, BTPosition<E> right, BTPosition<E> parent) {
+    public BTNodo( E element, BTNodo<E> left, BTNodo<E> right, BTNodo<E> parent) {
         this.element = element; 
         this.left = left;
         this.right = right; 
@@ -14,25 +15,25 @@ public class BTNodo<E> implements BTPosition<E>{
     public void setElement(E e){
         element =e;
     }
-    public void setLeft(BTPosition<E> n){
+    public void setLeft(BTNodo<E> n){
         left = n;
     }
-    public void setRight(BTPosition<E> n){
+    public void setRight(BTNodo<E> n){
         right = n;
     }
-    public void setParent(BTPosition<E> n){
+    public void setParent(BTNodo<E> n){
         parent = n;
     }
     public E element(){
         return element;
     }
-    public BTPosition<E> getParent(){
+    public BTNodo<E> getParent(){
         return parent;
     }
-    public BTPosition<E> getLeft(){
+    public BTNodo<E> getLeft(){
         return left;
     }
-    public BTPosition<E> getRight(){
+    public BTNodo<E> getRight(){
         return right;
     }
 }
